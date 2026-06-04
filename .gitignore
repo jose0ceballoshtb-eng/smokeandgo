@@ -1,0 +1,13 @@
+node_modules/
+**/node_modules/
+.expo/
+.vscode/
+.DS_Store
+npm-debug.log
+yarn-error.log
+dist/
+build/
+.env
+/.expo-shared/
+*.local
+node_modules

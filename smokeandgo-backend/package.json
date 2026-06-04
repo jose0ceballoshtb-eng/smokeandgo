@@ -1,0 +1,31 @@
+{
+  "name": "smokeandgo-backend",
+  "version": "1.0.0",
+  "description": "",
+  "type": "module",
+  "main": "src/server.js",
+  "scripts": {
+    "start": "node src/server.js",
+    "dev": "node src/server.js",
+    "receiver": "node src/receiver.js",
+    "test-db": "node src/test-db.js"
+  },
+  "dependencies": {
+    "@fastify/cors": "^11.2.0",
+    "@fastify/helmet": "^11.0.0",
+    "@fastify/jwt": "^10.0.0",
+    "bcrypt": "^6.0.0",
+    "dotenv": "^17.4.2",
+    "expo-secure-store": "^55.0.14",
+    "fastify": "^5.8.5",
+    "localtunnel": "^2.0.2",
+    "pg": "^8.20.0",
+    "xss": "^1.0.14"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "overrides": {
+    "postcss": "8.5.10"
+  }
+}

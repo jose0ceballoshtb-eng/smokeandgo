@@ -1,0 +1,84 @@
+Resumen de automatización - SmokeAndGo
+
+Objetivo:
+  Automatizar el arranque del receptor que guarda registros en la carpeta
+  `mujeres desesperadas` y el arranque de la app mobile (Expo), de forma que
+  no tengas que ejecutar comandos manualmente.
+
+Archivos añadidos:
+  - run_all.ps1 (en la raíz del proyecto)
+  - smokeandgo-backend/src/receiver.js (receptor HTTP que escribe archivos)
+
+Cómo usar (rápido):
+  1) Abrir PowerShell como usuario (no hace falta Administrador).
+  2) Ir al directorio del proyecto:
+       cd C:\Users\Cosmos\Desktop\smokeandgo
+  3) Permitir ejecución de scripts si es necesario (solo una vez):
+       Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser
+  4) Ejecutar el script de automatización:
+       .\run_all.ps1
+
+Qué hace `run_all.ps1`:
+  - Instala dependencias (npm install) en `smokeandgo-backend` y `mobile` si
+    faltan carpetas `node_modules`.
+  - Abre una ventana PowerShell nueva que ejecuta `npm run receiver` en
+    `smokeandgo-backend` (servidor receptor en puerto 4000). Ese receptor
+    escribe archivos JSON/Texto en esta carpeta `mujeres desesperadas`.
+  - Abre otra ventana PowerShell nueva que ejecuta `npx expo start` en `mobile`.
+
+URLs usadas por la app (configuración actual):
+  - Receptor: http://10.0.2.2:4000 (emulador Android)
+  - Fallback: http://localhost:4000
+  - Si usas un dispositivo físico: sustituye `10.0.2.2` por la IP del PC,
+    por ejemplo `http://192.168.1.42:4000`. Para ello puedes editar
+    `mobile/src/utils/fileStorage.js` y `mobile/src/utils/auth.js` (globales)
+    o establecer `global.FILE_API_BASE` o `global.API_BASE` al arrancar Expo.
+
+Pruebas realizadas automáticamente:
+  - Se creó un archivo de prueba `test_remote.json` en esta carpeta para
+    verificar que el receptor puede escribir correctamente.
+
+Notas de privacidad / seguridad:
+  - Los datos se graban en texto claro según tu petición. Asegúrate de que
+    la carpeta no se comparte públicamente si contiene información sensible.
+  - El receptor corre en HTTP sin autenticación; limita el acceso a la
+    red local si es necesario.
+
+Si quieres que también programe el receptor para que arranque al iniciar
+Windows (Task Scheduler) dímelo y lo añado.
+
+Fin del resumen.
+Resumen: Verificación de email y conectividad
+
+Estado actual
+- El mapa muestra 2 máquinas con ubicación e iconos (funciona).
+- Flujo de registro: ahora valida email en cliente; el input de fecha muestra DD/MM/YYYY y se envía como YYYY-MM-DD.
+- Comprobación de conexión: se hace un fetch corto a https://clients3.google.com/generate_204 con timeout 3s; si falla, muestra un Alert y cancela el registro.
+- Si el backend devuelve token, la app guarda el token y redirige a map. Si no, muestra alerta de éxito y redirige a login.
+
+Tres opciones propuestas (elegir una)
+1) Implementar NetInfo + cola offline
+- Detectar estado de red con @react-native-community/netinfo.
+- Permitir registro offline guardando la operación en una cola local (AsyncStorage/archivo).
+- Sincronizar automáticamente cuando haya conexión.
+- Ventaja: buena UX offline; mayor trabajo.
+
+2) Permitir registro local inmediato (rápido)
+- Quitar o relajar la comprobación de red en app/register.tsx.
+- Guardar usuario localmente (user.json) y redirigir a login/mapa.
+- Verificación por email y sincronización posterior opcionales.
+- Ventaja: rápido de implementar.
+
+3) Cola de sincronización sin cambiar UI
+- Mantener la comprobación actual, pero si falla la red guardar la acción como pendiente.
+- Cuando se recupere la conexión, reintentar automáticamente.
+- Ventaja: compromiso entre UX y seguridad.
+
+Tres acciones para cuando despiertes
+A) Implementar NetInfo y banner offline; crear esqueleto src/utils/syncQueue.ts para gestionar la cola.
+B) Implementar registro local inmediato: quitar la comprobación de red en app/register.tsx, guardar en src/utils/fileStorage y probar en emulador.
+C) Implementar verificación por correo en backend: añadir endpoint para envío de token y ruta de confirmación; actualizar src/utils/auth.js y UI en app/register.tsx.
+
+Archivos clave
+- app/register.tsx (lógica registro y comprobación de red)
+- src/utils/auth.js (apiRegister, saveToken)

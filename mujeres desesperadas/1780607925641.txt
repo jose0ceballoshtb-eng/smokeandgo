@@ -1,0 +1,7 @@
+{
+  "name": "pepe",
+  "email": "pinguino_amarillo_59@hotmail.com",
+  "password": "pepe12345",
+  "birthdate": "1995-03-28",
+  "ts": 1780607924682
+}

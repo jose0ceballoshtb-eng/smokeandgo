@@ -1,0 +1,6 @@
+{
+  "dependencies": {
+    "expo-device": "^56.0.4",
+    "expo-file-system": "^56.0.7"
+  }
+}
