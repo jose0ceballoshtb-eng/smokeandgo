@@ -21,11 +21,19 @@ import authRoutes from "./routes/auth.routes.js";
 
 fastify.register(authRoutes, { prefix: "/auth" });
 
+// Health check for Render and load balancers
+fastify.get('/health', async () => ({ ok: true }));
+
 // Inicializar DB (crear tablas si hace falta) y arrancar servidor
 async function start() {
   try {
-    await initDb();
-    await fastify.listen({ port: process.env.PORT || 3000 });
+    try {
+      await initDb();
+    } catch (dbErr) {
+      fastify.log.warn({ err: dbErr }, 'DB init failed — continuing without DB (check env vars)');
+    }
+
+    await fastify.listen({ port: process.env.PORT || 3000, host: '0.0.0.0' });
     console.log("Servidor backend funcionando en puerto", process.env.PORT || 3000);
   } catch (err) {
     fastify.log.error(err);
