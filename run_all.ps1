@@ -29,7 +29,7 @@ $root = Split-Path -Parent $MyInvocation.MyCommand.Definition
 $backend = Join-Path $root 'smokeandgo-backend'
 if (Test-Path $backend) {
   Ensure-NodeModules $backend
-  Write-Output "Lanzando servidor backend (puerto 3000) y receptor (puerto 4000) en ventanas nuevas..."
+  Write-Output "Lanzando servidor backend y receptor (puerto por defecto 3000) en ventanas nuevas..."
   Start-Process powershell -ArgumentList "-NoExit","-Command","cd '$backend'; npm run dev"
   Start-Process powershell -ArgumentList "-NoExit","-Command","cd '$backend'; npm run receiver"
 } else {

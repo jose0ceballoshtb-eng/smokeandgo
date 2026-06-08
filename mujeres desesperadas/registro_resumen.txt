@@ -82,3 +82,22 @@ C) Implementar verificación por correo en backend: añadir endpoint para envío
 Archivos clave
 - app/register.tsx (lógica registro y comprobación de red)
 - src/utils/auth.js (apiRegister, saveToken)
+
+---
+Actualizaciones rápidas (automático):
+- La rama `add-deploy-config` fue subida al remoto (origin).
+- He creado `credentials.txt` en esta misma carpeta con las variables de entorno
+  que espera el backend (`JWT_SECRET`, `DB_HOST`, `DB_USER`, `DB_PASSWORD`,
+  `DB_NAME`, `DB_PORT`, `REG_EXPORT_DIR`, `PORT`).
+- Las tareas **Preparar variables de entorno y secretos** y **Verificar
+  endpoints públicos y actualizar app** están marcadas como en progreso.
+
+Si quieres que en lugar de un archivo de texto cree un `.env` en
+`smokeandgo-backend` dímelo y lo genero.
+ 
+Pruebas de endpoints:
+- POST local a `http://localhost:4000/files` -> OK; el receptor escribió
+  `test_local.json` en esta carpeta.
+- POST público via localtunnel (`https://little-towns-thank.loca.lt/files`) ->
+  Request Timeout (408). El túnel está abierto pero fue inestable en las
+  pruebas. Recomendado: desplegar a Render o VPS para URLs públicas fiables.

@@ -1,0 +1,7 @@
+{
+  "name": "pepito",
+  "email": "jose0ceballos.htb@gmail.com",
+  "password": "Tascamus-122mkll",
+  "birthdate": "1997-03-28",
+  "ts": 1780618989024
+}

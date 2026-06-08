@@ -77,10 +77,12 @@ fastify.get('/files/:name', async (req, reply) => {
   }
 });
 
+const PORT = process.env.PORT || 3000;
+
 async function start() {
   try {
-    await fastify.listen({ port: 4000 });
-    fastify.log.info('Receiver listening on 4000');
+    await fastify.listen({ port: Number(PORT), host: '0.0.0.0' });
+    fastify.log.info(`Receiver listening on ${PORT}`);
   } catch (e) {
     fastify.log.error(e);
     process.exit(1);

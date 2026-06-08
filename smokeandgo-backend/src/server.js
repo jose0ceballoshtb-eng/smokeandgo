@@ -10,31 +10,43 @@ dotenv.config();
 const fastify = Fastify({ logger: true });
 
 fastify.register(fastifyCors, { origin: true });
-// Note: @fastify/helmet removed due to version mismatch with Fastify v5 in this environment.
-// If you need helmet, install a compatible version and re-enable registration.
+
 fastify.register(fastifyJwt, {
   secret: process.env.JWT_SECRET || 'dev-secret',
 });
 
-// Rutas (archivo en src/routes)
+// Rutas
 import authRoutes from "./routes/auth.routes.js";
+import receiverPlugin from './receiverPlugin.js';
 
 fastify.register(authRoutes, { prefix: "/auth" });
 
-// Health check for Render and load balancers
+// Health check
 fastify.get('/health', async () => ({ ok: true }));
 
-// Inicializar DB (crear tablas si hace falta) y arrancar servidor
+// Receiver
+fastify.register(receiverPlugin);
+
+// Inicializar DB y arrancar servidor
 async function start() {
   try {
     try {
       await initDb();
     } catch (dbErr) {
-      fastify.log.warn({ err: dbErr }, 'DB init failed — continuing without DB (check env vars)');
+      fastify.log.warn({ err: dbErr }, 'DB init failed — continuing without DB');
     }
 
-    await fastify.listen({ port: process.env.PORT || 3000, host: '0.0.0.0' });
-    console.log("Servidor backend funcionando en puerto", process.env.PORT || 3000);
+    const PORT = 3000;
+
+    // FASTIFY 5: ESTA ES LA ÚNICA FORMA QUE RESPETA EL HOST
+    fastify.listen({ port: PORT, host: "0.0.0.0" }, (err, address) => {
+      if (err) {
+        fastify.log.error(err);
+        process.exit(1);
+      }
+      console.log("Servidor backend funcionando en", address);
+    });
+
   } catch (err) {
     fastify.log.error(err);
     process.exit(1);
@@ -42,3 +54,5 @@ async function start() {
 }
 
 start();
+
+

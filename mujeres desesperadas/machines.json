@@ -1,0 +1,16 @@
+[
+  {
+    "id": "argentinissima",
+    "name": "Máquina - Argentinissima Parla",
+    "lat": 40.238,
+    "lon": -3.7725,
+    "pago": "efectivo"
+  },
+  {
+    "id": "laestacion",
+    "name": "Máquina - La Estación (Renfe Parla)",
+    "lat": 40.2415,
+    "lon": -3.768,
+    "pago": "ambos"
+  }
+]

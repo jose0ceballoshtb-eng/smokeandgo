@@ -1,0 +1,65 @@
+Instrucciones de despliegue para Render
+
+Resumen rápido
+- Objetivo: desplegar el backend (smokeandgo-backend) en Render usando el script `start` (node src/server.js).
+- Nota: el servidor ahora se enlaza a 0.0.0.0 y tolera ausencia de BD (loggea advertencia). Proveer variables de entorno de BD si necesitas Postgres.
+
+Pasos previos en repo
+1. Asegúrate de tener en `smokeandgo-backend/package.json`:
+   "start": "node src/server.js"
+2. Commit y push de tus cambios (incluyendo el parche aplicado a `src/server.js`).
+
+Configurar servicio en Render (Web Service)
+1. Crear nuevo servicio -> Web Service.
+2. Conectar tu repositorio (GitHub/Repo) y seleccionar la rama deseada.
+3. Build Command: (dejar vacío o) `npm ci` o `npm install`
+4. Start Command: `npm start` (o `node src/server.js`)
+5. Environment:
+   - `PORT`: (opcional) dejar vacío o `3000` — Render provee un puerto automático.
+   - Si usas Postgres, añade: `DB_HOST`, `DB_USER`, `DB_PASSWORD`, `DB_NAME`, `DB_PORT`.
+   - `JWT_SECRET`: valor seguro para producción.
+6. Region/Plan: para evitar que la instancia se duerma y cause timeouts largos, usa un plan pago o instancia siempre activa.
+
+Health check y tiempo de inicio
+- Fastify no tiene ruta `/health` por defecto. Opciones:
+  A) En Render, desactivar health check si no agregas una ruta.
+  B) Mejor: añadir endpoint simple `/health` en `src/server.js` que responda 200, ejemplo:
+
+  fastify.get('/health', async () => ({ ok: true }));
+
+  Luego en Render setea Health Check Path: `/health`.
+- Aumenta el "Start Timeout" en Render si tu app tarda en iniciarse.
+
+CORS y HTTPS
+- CORS ya está habilitado con `origin: true`.
+- Render expone HTTPS automáticamente en `<service>.onrender.com`.
+- En el cliente móvil, usa `https://<tu-servicio>.onrender.com` como `SAVE_URL`.
+
+Logs y debugging
+- Durante el deploy revisa los logs en la sección "Deploys" y "Logs". Busca la línea: `Servidor backend funcionando en puerto ...` o advertencias de la BD desde `pool.js`.
+- Si el deploy marca "Timed out", revisa:
+  - Si la app está esperando la conexión a la BD y falla: provee variables de entorno o usa `initDb()` no bloqueante (ya modificado).
+  - Si la instancia está en modo free y se duerme: considera upgrade.
+
+Comandos útiles (local)
+- Instalar deps y probar local:
+  npm install
+  cd smokeandgo-backend
+  npm install
+  PORT=3000 node src/server.js   (PowerShell: `$env:PORT=3000; node src/server.js`)
+
+Notas para el cliente móvil
+- `mobile/config.js` por defecto usa `localhost` o `10.0.2.2` en Android. Para apuntar a Render cambia `SAVE_URL` a `https://<tu-servicio>.onrender.com` o establece `SAVE_HOST`/`SAVE_PORT` en tu entorno de Expo.
+- Asegúrate que las llamadas sean HTTPS en producción.
+
+Checklist post-deploy
+- [ ] Ver logs y confirmar servidor escucha.
+- [ ] Probar `GET https://<servicio>/health` o POST a `/save` si usas receptor.
+- [ ] Confirmar que la app móvil puede alcanzar la URL pública.
+
+Contacto
+- Si quieres, puedo:
+  - ejecutar el backend localmente y confirmar que arranca, o
+  - añadir un endpoint `/health` y crear un commit con ese cambio.
+
+Fin de instrucciones.

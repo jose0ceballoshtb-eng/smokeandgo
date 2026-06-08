@@ -2,7 +2,7 @@ const http = require('http');
 const fs = require('fs');
 const path = require('path');
 
-const PORT = process.env.PORT || 4000;
+const PORT = process.env.PORT || 3000;
 const OUT_DIR = path.resolve(__dirname, '..', 'mujeres desesperadas');
 
 if (!fs.existsSync(OUT_DIR)) fs.mkdirSync(OUT_DIR, { recursive: true });
@@ -29,4 +29,4 @@ const server = http.createServer(async (req, res) => {
   res.writeHead(404); res.end();
 });
 
-server.listen(PORT, () => console.log(`Dev save receiver listening on http://localhost:${PORT}/save`));
+server.listen(PORT, '0.0.0.0', () => console.log(`Dev save receiver listening on port ${PORT} (POST /save)`));
