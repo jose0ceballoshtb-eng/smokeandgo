@@ -1,0 +1,26 @@
+{
+  "expo": {
+    "name": "SmokeAndGo",
+    "slug": "smokeandgo",
+    "scheme": "smokeandgo",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "userInterfaceStyle": "light",
+    "assetBundlePatterns": [
+      "**/*"
+    ],
+    "icon": "./mobile/assets/images/syg.jpg",
+    "extra": {
+      "eas": {
+        "projectId": "144196a7-43f9-4046-8371-09c12218a152"
+      }
+    },
+    "android": {
+      "package": "com.smoke2024db.smokeandgo",
+      "adaptiveIcon": {
+        "foregroundImage": "./mobile/assets/images/syg.jpg",
+        "backgroundColor": "#FFF4E8"
+      }
+    }
+  }
+}

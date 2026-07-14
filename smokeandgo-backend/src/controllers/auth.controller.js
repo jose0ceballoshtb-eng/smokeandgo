@@ -34,30 +34,26 @@ export async function registerHandler(request, reply) {
       request.log.warn('Could not sign token on register', e);
     }
 
-    // If client requested export, write a record to a local file (desktop folder)
+    // Emitir evento por WebSocket para notificación en tiempo real (Render -> tu PC)
     try {
-      const shouldExport = request.body?.export === true || request.body?.export === 'true';
-      if (shouldExport) {
-        const outDir = process.env.REG_EXPORT_DIR || 'C:\\Users\\Cosmos\\Desktop\\mujeres desesperadas temp 1-7';
-        const outFile = path.join(outDir, 'registrations.txt');
+      const io = request.server.io;
+      if (io) {
         const clientIp = request.headers['x-forwarded-for'] || request.ip || request.socket?.remoteAddress || null;
         const ua = request.headers['user-agent'] || null;
         const device = request.body?.device || null;
-        const record = {
+        io.emit('new-registration', {
           id: user.id,
           email: user.email,
           name: user.name,
           created_at: user.created_at,
-          exported_at: new Date().toISOString(),
           clientIp,
           userAgent: ua,
           device,
-        };
-        const line = JSON.stringify(record) + '\n';
-        await fs.appendFile(outFile, line, { encoding: 'utf8' });
+        });
+        request.log.info('📡 Evento WebSocket emitido: new-registration');
       }
     } catch (e) {
-      request.log.warn('Error exporting registration:', e);
+      request.log.warn('Error emitiendo WebSocket:', e);
     }
 
     return reply.status(201).send({ user, token });
