@@ -4,7 +4,6 @@ import fastifyCors from "@fastify/cors";
 import fastifyJwt from "@fastify/jwt";
 import dotenv from "dotenv";
 import { Server as SocketIOServer } from "socket.io";
-import http from "http";
 import { spawn } from "child_process";
 import path from "path";
 import { fileURLToPath } from "url";
@@ -18,22 +17,14 @@ dotenv.config();
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-// Crear servidor HTTP para compartir entre Fastify y Socket.IO
-const httpServer = http.createServer();
+// Fastify gestiona internamente su http.Server
+const fastify = Fastify({ logger: true });
 
-const io = new SocketIOServer(httpServer, {
+// Socket.IO se adjunta al http.Server interno de Fastify
+const io = new SocketIOServer(fastify.server, {
   cors: {
     origin: "*",
     methods: ["GET", "POST"],
-  },
-});
-
-// Crear Fastify usando el mismo httpServer
-const fastify = Fastify({
-  logger: true,
-  serverFactory: (handler) => {
-    httpServer.on("request", handler);
-    return httpServer;
   },
 });
 

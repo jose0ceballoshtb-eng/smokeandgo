@@ -11,3 +11,7 @@ build/
 /.expo-shared/
 *.local
 node_modules
+*.apk
+*.vsix
+tempapp/
+smokeandgo-backend/src/storage/
