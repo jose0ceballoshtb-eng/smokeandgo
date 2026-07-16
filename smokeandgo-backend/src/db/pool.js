@@ -4,11 +4,22 @@ dotenv.config(); // Cargar variables de entorno ANTES de usar process.env
 import pkg from "pg";
 const { Pool } = pkg;
 
-const hasDatabaseUrl = Boolean(process.env.DATABASE_URL);
+function normalizeDbUrl(value) {
+  if (!value) return "";
+  return String(value).trim().replace(/^['"]|['"]$/g, "");
+}
+
+const databaseUrl = normalizeDbUrl(
+  process.env.DATABASE_URL ||
+    process.env.POSTGRES_URL ||
+    process.env.SUPABASE_DB_URL
+);
+
+const hasDatabaseUrl = Boolean(databaseUrl);
 
 const poolConfig = hasDatabaseUrl
   ? {
-      connectionString: process.env.DATABASE_URL,
+      connectionString: databaseUrl,
       ssl: { rejectUnauthorized: false },
     }
   : {
